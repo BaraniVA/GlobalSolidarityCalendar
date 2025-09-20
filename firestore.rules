@@ -8,8 +8,10 @@ service cloud.firestore {
 
     // Events collection - anyone can read approved events, authenticated users can do more
     match /events/{eventId} {
-      // Allow anyone to read approved events
-      allow read: if resource.data.status == 'approved';
+      // Allow anyone to read approved events, moderators/admins can read all events
+      allow read: if resource.data.status == 'approved' || 
+        (request.auth != null && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['moderator', 'admin']);
       // Only authenticated users can create events (they'll be pending approval)
       allow create: if request.auth != null && request.resource.data.createdBy == request.auth.uid;
       // Only authenticated users can update their own events or moderators can update any
