@@ -48,7 +48,10 @@ const Home: React.FC = () => {
               Global Solidarity Calendar
             </h1>
             <p className="text-xl opacity-90 max-w-3xl mx-auto">
-              Discover and join solidarity events worldwide. Your voice matters in the call for justice and peace.
+              Discover and join solidarity events worldwide in support of Palestine. Your voice matters in the call for justice, peace, and a free Palestine.
+            </p>
+            <p className="text-lg opacity-80 max-w-2xl mx-auto mt-4">
+              Connect with communities, participate in protests, educational events, and advocacy actions that amplify Palestinian voices and support the liberation movement.
             </p>
           </div>
         </div>
