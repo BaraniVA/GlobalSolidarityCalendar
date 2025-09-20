@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read and write their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Events collection - authenticated users can read approved events
+    match /events/{eventId} {
+      allow read: if request.auth != null;
+      // Only authenticated users can create events (they'll be pending approval)
+      allow create: if request.auth != null && request.resource.data.createdBy == request.auth.uid;
+      // Only authenticated users can update their own events or moderators can update any
+      allow update: if request.auth != null && 
+        (resource.data.createdBy == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['moderator', 'admin']);
+      // Moderators and admins can delete events
+      allow delete: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['moderator', 'admin'];
+    }
+
+    // Reports collection - authenticated users can create reports
+    match /reports/{reportId} {
+      allow read: if request.auth != null && 
+        (resource.data.reportedBy == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['moderator', 'admin']);
+      allow create: if request.auth != null && request.resource.data.reportedBy == request.auth.uid;
+      // Moderators and admins can delete reports
+      allow delete: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['moderator', 'admin'];
+    }
+
+    // Transparency log - all authenticated users can read (for transparency)
+    match /transparencyLog/{logId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['moderator', 'admin'];
+    }
+  }
+}
