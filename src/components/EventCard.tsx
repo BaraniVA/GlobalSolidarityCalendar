@@ -20,13 +20,20 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
     digital: 'bg-palestine-white border border-palestine-black text-palestine-black',
   };
 
+  const typeLabels = {
+    protest: 'Protest/Rally',
+    cultural: 'Cultural',
+    educational: 'Educational',
+    digital: 'Digital',
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center space-x-2">
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${typeColors[event.type]}`}>
-              {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+              {typeLabels[event.type]}
             </span>
             {event.verified && (
               <div className="flex items-center space-x-1 text-palestine-green">

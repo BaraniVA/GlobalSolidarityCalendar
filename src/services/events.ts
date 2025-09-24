@@ -233,7 +233,7 @@ class MockEventsService {
     return reportedEvents;
   }
 
-  async removeEvent(eventId: string): Promise<void> {
+  async removeEvent(eventId: string, reason: string = 'Event removed due to reports'): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 500));
     
     // Remove the event from mock data
@@ -250,7 +250,7 @@ class MockEventsService {
       id: 'log-' + Date.now(),
       eventId,
       action: 'removed',
-      reason: 'Event removed due to reports',
+      reason,
       moderatorId: 'moderator-id',
       createdAt: new Date().toISOString()
     });
@@ -688,7 +688,7 @@ class FirebaseEventsService {
     }
   }
 
-  async removeEvent(eventId: string): Promise<void> {
+  async removeEvent(eventId: string, reason: string = 'Event removed due to reports'): Promise<void> {
     try {
       if (!auth.currentUser) {
         throw new Error('User must be authenticated to remove events');
@@ -710,7 +710,7 @@ class FirebaseEventsService {
       await addDoc(this.transparencyLogCollection, {
         eventId,
         action: 'removed',
-        reason: 'Event removed due to reports',
+        reason,
         moderatorId: auth.currentUser.uid,
         createdAt: Timestamp.now()
       });
