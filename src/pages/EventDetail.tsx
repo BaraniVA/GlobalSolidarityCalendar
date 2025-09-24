@@ -108,6 +108,13 @@ const EventDetail: React.FC = () => {
     digital: 'bg-green-100 text-green-800',
   };
 
+  const typeLabels = {
+    protest: 'Protest/Rally',
+    cultural: 'Cultural',
+    educational: 'Educational',
+    digital: 'Digital',
+  };
+
   const reportReasons = [
     { value: 'wrong_info', label: 'Incorrect Information' },
     { value: 'spam', label: 'Spam or Duplicate' },
@@ -133,7 +140,7 @@ const EventDetail: React.FC = () => {
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <span className={`px-3 py-1 text-sm font-medium rounded-full ${typeColors[event.type]}`}>
-                  {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                  {typeLabels[event.type]}
                 </span>
                 {event.verified && (
                   <div className="flex items-center space-x-1 text-green-600">

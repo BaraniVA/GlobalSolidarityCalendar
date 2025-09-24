@@ -145,10 +145,10 @@ const ModerationDashboard: React.FC = () => {
     }
   };
 
-  const handleRemoveEvent = async (eventId: string) => {
+  const handleRemoveEvent = async (eventId: string, reason: string = 'Event removed due to reports') => {
     try {
       setActionLoading(eventId);
-      await eventsService.removeEvent(eventId);
+      await eventsService.removeEvent(eventId, reason);
       
       // Remove the event from the list
       setModerationEvents(prev => prev.filter(modEvent => modEvent.event.id !== eventId));
@@ -232,6 +232,13 @@ const ModerationDashboard: React.FC = () => {
     cultural: 'bg-purple-100 text-purple-800',
     educational: 'bg-blue-100 text-blue-800',
     digital: 'bg-green-100 text-green-800',
+  };
+
+  const typeLabels = {
+    protest: 'Protest/Rally',
+    cultural: 'Cultural',
+    educational: 'Educational',
+    digital: 'Digital',
   };
 
   return (
@@ -353,7 +360,7 @@ const ModerationDashboard: React.FC = () => {
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex space-x-2">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${typeColors[modEvent.event.type]}`}>
-                        {modEvent.event.type.charAt(0).toUpperCase() + modEvent.event.type.slice(1)}
+                        {typeLabels[modEvent.event.type]}
                       </span>
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                         modEvent.eventType === 'pending' ? 'bg-yellow-100 text-yellow-800' :
@@ -460,6 +467,19 @@ const ModerationDashboard: React.FC = () => {
                             </button>
                           </>
                         )}
+                        {modEvent.eventType === 'approved' && new Date(modEvent.event.date) < new Date() && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveEvent(modEvent.event.id, 'Event removed as it has passed its deadline');
+                            }}
+                            disabled={actionLoading === modEvent.event.id}
+                            className="flex items-center px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+                          >
+                            <X className="h-4 w-4 mr-1" />
+                            Remove Past Event
+                          </button>
+                        )}
                       </div>
                     </div>
                   )}
@@ -481,7 +501,7 @@ const ModerationDashboard: React.FC = () => {
                   <div className="space-y-4">
                     <div>
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${typeColors[selectedModerationEvent.event.type]}`}>
-                        {selectedModerationEvent.event.type.charAt(0).toUpperCase() + selectedModerationEvent.event.type.slice(1)}
+                        {typeLabels[selectedModerationEvent.event.type]}
                       </span>
                       <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
                         selectedModerationEvent.eventType === 'pending' ? 'bg-yellow-100 text-yellow-800' :

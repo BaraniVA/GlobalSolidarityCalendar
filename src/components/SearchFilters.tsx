@@ -10,7 +10,7 @@ interface SearchFiltersProps {
 const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, onFiltersChange }) => {
   const eventTypes = [
     { value: 'all', label: 'All Types' },
-    { value: 'protest', label: 'Protests' },
+    { value: 'protest', label: 'Protests & Rallies' },
     { value: 'cultural', label: 'Cultural' },
     { value: 'educational', label: 'Educational' },
     { value: 'digital', label: 'Digital' },
