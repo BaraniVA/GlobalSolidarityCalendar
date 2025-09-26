@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Event, EventFilters } from '../types';
 import { eventsService } from '../services/events';
 import EventCard from '../components/EventCard';
 import SearchFilters from '../components/SearchFilters';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Users } from 'lucide-react';
 import GSCLogo from '../assets/images/GSCLogo2.png';
+import { useVisitCounter } from '../hooks/useVisitCounter';
 
 const Home: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -15,12 +16,9 @@ const Home: React.FC = () => {
     location: '',
     type: 'all',
   });
+  const { visitCount, loading: counterLoading } = useVisitCounter();
 
-  useEffect(() => {
-    loadEvents();
-  }, [filters]);
-
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -35,7 +33,11 @@ const Home: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadEvents();
+  }, [loadEvents]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -53,6 +55,19 @@ const Home: React.FC = () => {
             <p className="text-lg opacity-80 max-w-2xl mx-auto mt-4">
               Connect with communities, participate in protests, educational events, and advocacy actions that amplify Palestinian voices and support the liberation movement.
             </p>
+            {/* Visit Counter */}
+            <div className="mt-8 flex items-center justify-center space-x-2 text-lg opacity-90">
+              <Users className="h-5 w-5" />
+              <span>
+                {counterLoading ? (
+                  <span className="animate-pulse">Loading...</span>
+                ) : (
+                  <>
+                    <span className="font-semibold">{visitCount.toLocaleString()}</span> visitors have joined the movement
+                  </>
+                )}
+              </span>
+            </div>
           </div>
         </div>
       </div>
